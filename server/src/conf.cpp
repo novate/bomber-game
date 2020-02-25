@@ -1,7 +1,8 @@
 #include "../include/conf.hpp"
 using namespace std;
 
-int main() {
+int main()
+{
     ServerConf conf_s = read_conf_server();
     cout << "server conf, port:\t" << conf_s.port << endl;
     ClientConf conf_c = read_conf_client();
@@ -10,7 +11,8 @@ int main() {
     return 0;
 }
 
-ServerConf read_conf_server() {
+ServerConf read_conf_server()
+{
     ServerConf conf;
     char *buf = new char[100];
 
@@ -30,12 +32,13 @@ ServerConf read_conf_server() {
     return conf;
 }
 
-ClientConf read_conf_client() {
+ClientConf read_conf_client()
+{
     ClientConf conf;
     char *buf = new char[100];
 
     ifstream ifs(kClientConfFile, ifstream::in);
-    
+
     string line;
     // get ip
     getline(ifs, line);

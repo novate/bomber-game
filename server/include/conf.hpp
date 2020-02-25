@@ -8,11 +8,13 @@
 #define kServerConfFile "conf/server.conf"
 #define kClientConfFile "conf/client.conf"
 
-struct ServerConf {
+struct ServerConf
+{
     uint16_t port;
 };
 
-struct ClientConf {
+struct ClientConf
+{
     char server_ip[16] = "0.0.0.0";
     uint16_t port;
 };

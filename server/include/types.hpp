@@ -6,7 +6,7 @@
 #include <string>
 #include "Log.h"
 
-#include <algorithm>    // std::max
+#include <algorithm> // std::max
 #include <queue>
 #include <list>
 
@@ -30,21 +30,24 @@
 
 using namespace fly;
 
-#define graceful_return(s, x) {\
-    perror((s));\
-    return((x)); }
+#define graceful_return(s, x) \
+    {                         \
+        perror((s));          \
+        return ((x));         \
+    }
 
 const int MaxHistoryLen = 300;
-const int MaxFileLen = 1021;    // 1 KB    
+const int MaxFileLen = 1021; // 1 KB
 
 // Constants
-const size_t kSessionSetSize = 5; // max number of active sessions
-const unsigned int kHeaderSize = 3; // network packet header size
+const size_t kSessionSetSize = 5;     // max number of active sessions
+const unsigned int kHeaderSize = 3;   // network packet header size
 const size_t kMaxPacketLength = 1024; // TODO: double check on this number
 const size_t kRecvBufferSize = kMaxPacketLength;
 
 // used as the first byte of data packets
-enum class PacketType : uint8_t {
+enum class PacketType : uint8_t
+{
     Info = 0x00,
     InfoResponse = 0x01,
     Password = 0x02,
@@ -64,18 +67,21 @@ enum class PacketType : uint8_t {
     OfflineUser = 0x10,
 };
 
-struct DataPacketHeader {
+struct DataPacketHeader
+{
     PacketType type;
     uint16_t payload_size;
 };
-    
-struct DataPacket {
+
+struct DataPacket
+{
     PacketType type;
     std::vector<uint8_t> data;
 };
 
 // status codes
-enum class StatusCode : int {
+enum class StatusCode : int
+{
     OK = 0,
     OpenFile = -1,
     LogInit = -2,
@@ -96,7 +102,8 @@ enum class StatusCode : int {
 };
 
 // Server response type
-enum class ResponseType : uint8_t {
+enum class ResponseType : uint8_t
+{
     UserNotExist = 0,
     OK = 1,
     RefuseInvit = 2,
@@ -108,19 +115,21 @@ enum class ResponseType : uint8_t {
 
 // State machine definition
 // Defined almost sequentially. Actions corresponding to a state are in comments.
-enum class SessionState : unsigned int {
-    Acceptance,         // On acceptance, create a new client instance
+enum class SessionState : unsigned int
+{
+    Acceptance, // On acceptance, create a new client instance
     Error,
     WaitForPasswd,
     ServerWaiting,
     WaitInvitResponse,
-    Responding,      
+    Responding,
     WaitForBoard,
     InGame,
 };
 
 // Used as a buffer in transfer layer, instantiated in Clients
-class CircularQueue {
+class CircularQueue
+{
 
 public:
     CircularQueue(size_t init_size);
@@ -133,10 +142,10 @@ public:
 
     // Also requires a getter method for _num_free_bytes here.
     size_t get_num_free_bytes() const;
-    size_t size () const;
+    size_t size() const;
     bool is_empty();
     bool is_full();
-    bool has_complete_packet(); // has at least one complete packet
+    bool has_complete_packet();  // has at least one complete packet
     DataPacket dequeue_packet(); // return a complete packet
 
 private:
@@ -145,12 +154,12 @@ private:
     size_t front, rear;
 };
 
-
-struct Message_To_App{
+struct Message_To_App
+{
     PacketType type_;
     ResponseType respond_;
     std::string user_name_;
-    std::string password_; 
+    std::string password_;
     std::string user_name_b_;
     int board_[10][10];
     uint8_t plane_coord_[12];
@@ -164,28 +173,30 @@ struct Message_To_App{
     // unsigned short config_; // 2 bytes in TransLayer
 };
 
-struct Message_To_Pre{
+struct Message_To_Pre
+{
     PacketType type_;
-    ResponseType respond_; 
+    ResponseType respond_;
     // int config_;
     std::vector<std::string> onlineuser_;
     std::string user_name_a_;
     std::string user_change_;
-    int x,y;
+    int x, y;
     int head_x, head_y;
     int tail_x, tail_y;
 };
 
 // not sure if struct group_text should be kept or just use text[] instead ?
-struct group_text{
+struct group_text
+{
     std::vector<std::string> user_list;
     std::string data;
 };
 
-struct file{
+struct file
+{
     std::string filePath;
 };
-
 
 // #endif
 
@@ -194,28 +205,30 @@ struct file{
 
 struct Client;
 
-struct GameInfo {
-    Client* opponent_;
+struct GameInfo
+{
+    Client *opponent_;
     int win_board_[10][10];
     uint8_t plane_coord_[12];
 };
 
-struct Client {
+struct Client
+{
 
-    Client(int socket_fd, size_t buffer_size) : 
-        socket_fd(socket_fd),
-        recv_buffer(buffer_size) 
-    {}
+    Client(int socket_fd, size_t buffer_size) : socket_fd(socket_fd),
+                                                recv_buffer(buffer_size)
+    {
+    }
 
     int client_id;
 
     CircularQueue recv_buffer;
-    std::queue< std::vector<uint8_t> > send_buffer;
+    std::queue<std::vector<uint8_t>> send_buffer;
 
     int socket_fd;
     SessionState state = SessionState::Acceptance;
     std::string host_username_;
-    
+
     Message_To_App message_ptoa;
     Message_To_Pre message_atop;
     GameInfo game_info_;
@@ -223,10 +236,7 @@ struct Client {
     // should be always greater than kHeaderSize (reset to this)
     // updated when packet is received and on state change
 
-
     // ~Client(); // Should call the destructor of the underlying CircularQueue
-
-
 };
 
 #endif
