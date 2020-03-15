@@ -1,5 +1,13 @@
 # Bomber Game
 
+- [Game Intro](#game-intro)
+- [Installation](#installation)
+- [Server Design](#server-design)
+- [Client Design](#client-design)
+- [Database Design](#database-design)
+- [Segment Design](#segment-design)
+- [Test Checklist](#test-checklist)
+
 ## Game Intro
 
 ![A sample playing board with 3 planes](pics/game_intro.png)
@@ -36,9 +44,9 @@ We recommend CentOS 7 with MySQL or MariaDB installed.
 
 The server, running as a daemon, has three layers:
 
-- Application Layer
-- Presentation Layer
-- Transfer Layer
+- [Application Layer](#application-layer)
+- [Presentation Layer](#presentation-layer)
+- [Transfer Layer](#transfer-layer)
 
 ### Application Layer
 
@@ -93,6 +101,10 @@ The core function of the transfer layer is to arrange the connection and data tr
 - **Receives and sends segments**: The transfer layer is responsible for receiving and sending segments and the read and write of the buffer. Each time when the transfer layer receives a whole segment, it transfers it to the upper layer.
 
 ## Client Design
+
+- [Main Structure](#main-structure)
+- [Backend of Client](#backend-of-client)
+- [Frontend of Client](#frontend-of-client)
 
 ### Main Structure
 
@@ -176,13 +188,19 @@ The initial password of all users is `123`. It is displayed not as `123`, becaus
 
 ## Segment Design
 
+- [Flags](#flags)
+- [All Segment Types](#all-segment-types)
+- [Login Segments](#login-segments)
+- [Sync Segments](#sync-segments)
+- [Game Segments](#game-segments)
+
 We designed 16 segments of 4 categories. Its public format is as follows, with a maximum length of 32 bytes:
 
 |         0          |       1, 2        | 3..END(MAX 31) |
 | :----------------: | :---------------: | :------------: |
 | segment descriptor | length of payload |    payload     |
 
-The flags are:
+### Flags
 
 |          FLAG           | DESCRIPTOR |
 | :---------------------: | :--------: |
@@ -376,7 +394,7 @@ The flags are:
 
 - Note: If Client wins, send this segment to Server. The server forwards this segment to the lost client.
 
-## Test Checklist Design
+## Test Checklist
 
 - There should be alert when server is not online.
 - Client can reconnect server when server re-online.
